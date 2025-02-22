@@ -6,10 +6,10 @@ const Todo = ({ todo, onToggle, onDelete }) => {
       <input
         type="checkbox"
         checked={todo.completed}
-        onChange={() => onToggle(todo.id)}
+        onChange={() => onToggle(todo._id)}
       />
       <span className={todo.completed ? 'completed' : ''}>{todo.title}</span>
-      <button onClick={() => onDelete(todo.id)}>Delete</button>
+      <button onClick={() => onDelete(todo._id)}>Delete</button>
     </div>
   );
 };

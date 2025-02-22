@@ -14,6 +14,7 @@ class TodoController {
   }
 
   async getTodos(req, res) {
+    console.log("todoController::", this.getTodos)
     try {
       const todos = await this.todoModel.find();
       res.status(200).json(todos);
