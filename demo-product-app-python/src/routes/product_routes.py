@@ -1,18 +1,22 @@
 from flask import Blueprint, request, jsonify
-from ..services.product_service import ProductService
+from ..models.product import Product
+from ..database.db import db
+from ..services.product_service import ProductService  # Import ProductService
 
 product_routes = Blueprint('product_routes', __name__)
 
 @product_routes.route('/products', methods=['POST'])
 def create_product():
-    try:
-        data = request.json
-        if not data:
-            return jsonify({'message': 'No input data provided'}), 400
-        product = ProductService.create_product(data)
-        return jsonify(product), 201
-    except Exception as e:
-        return jsonify({'message': str(e)}), 500
+    data = request.get_json()
+    new_product = Product(
+        name=data['name'],
+        description=data.get('description'),
+        price=data['price'],
+        quantity=data['quantity']
+    )
+    db.session.add(new_product)
+    db.session.commit()
+    return jsonify(new_product.to_dict()), 201
 
 @product_routes.route('/products', methods=['GET'])
 def get_products():
@@ -22,35 +26,31 @@ def get_products():
     except Exception as e:
         return jsonify({'message': str(e)}), 500
 
-@product_routes.route('/products/<int:product_id>', methods=['GET'])
-def get_product(product_id):
-    try:
-        product = ProductService.get_product(product_id)
-        if product:
-            return jsonify(product), 200
+@product_routes.route('/products/<int:id>', methods=['GET'])
+def get_product(id):
+    product = db.session.get(Product, id)
+    if product is None:
         return jsonify({'message': 'Product not found'}), 404
-    except Exception as e:
-        return jsonify({'message': str(e)}), 500
+    return jsonify(product.to_dict()), 200
 
-@product_routes.route('/products/<int:product_id>', methods=['PUT'])
-def update_product(product_id):
-    try:
-        data = request.json
-        if not data:
-            return jsonify({'message': 'No input data provided'}), 400
-        updated_product = ProductService.update_product(product_id, data)
-        if updated_product:
-            return jsonify(updated_product), 200
+@product_routes.route('/products/<int:id>', methods=['PUT'])
+def update_product(id):
+    data = request.get_json()
+    product = db.session.get(Product, id)
+    if product is None:
         return jsonify({'message': 'Product not found'}), 404
-    except Exception as e:
-        return jsonify({'message': str(e)}), 500
+    product.name = data['name']
+    product.description = data.get('description')
+    product.price = data['price']
+    product.quantity = data['quantity']
+    db.session.commit()
+    return jsonify(product.to_dict()), 200
 
-@product_routes.route('/products/<int:product_id>', methods=['DELETE'])
-def delete_product(product_id):
-    try:
-        success = ProductService.delete_product(product_id)
-        if success:
-            return jsonify({'message': 'Product deleted successfully'}), 204
+@product_routes.route('/products/<int:id>', methods=['DELETE'])
+def delete_product(id):
+    product = db.session.get(Product, id)
+    if product is None:
         return jsonify({'message': 'Product not found'}), 404
-    except Exception as e:
-        return jsonify({'message': str(e)}), 500
+    db.session.delete(product)
+    db.session.commit()
+    return '', 204
