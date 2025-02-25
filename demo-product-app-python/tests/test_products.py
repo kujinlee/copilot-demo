@@ -1,18 +1,27 @@
 import unittest
-from src.app import app
-from src.database.db import db, init_db
+from src.database import create_app
+from src.database.db import init_db
 import logging
 
 class TestProductCRUD(unittest.TestCase):
     @classmethod
     def setUpClass(cls):
+        # Set up logging for debugging purposes
         logging.basicConfig(level=logging.DEBUG)
-        cls.app = app.test_client()
+        
+        # Use the factory function to create the Flask application instance
+        # This ensures that the same initialization logic is used across the main application and tests
+        cls.app = create_app().test_client()
         cls.app.testing = True
-        with app.app_context():
-            logging.info("Initializing the database for testing")
-            init_db(app, force_create=True)
-            logging.info("Database initialized for testing")
+        
+        # Use the application context to perform database operations
+        with cls.app.application.app_context():
+            # Initialize the database for testing
+            # The init_db function will check if the database has already been initialized
+            # and will drop and recreate the tables if force_create is True
+            logging.info("TestProductCRUD:: Initializing the database for testing")
+            init_db(cls.app.application, force_create=True)
+            logging.info("TestProductCRUD:: Database initialized for testing")
 
     def create_product(self):
         logging.info("Creating a product")
