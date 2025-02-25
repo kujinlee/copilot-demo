@@ -14,6 +14,10 @@ class ProductService:
         return db.session.query(Product).filter(Product.id == product_id).first()
 
     @staticmethod
+    def get_all_products():
+        return db.session.query(Product).all()
+
+    @staticmethod
     def update_product(product_id, product_data):
         product = ProductService.get_product(product_id)
         if product:

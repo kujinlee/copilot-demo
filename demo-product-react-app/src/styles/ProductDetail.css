@@ -1,0 +1,16 @@
+.product-detail {
+  max-width: 600px;
+  margin: 0 auto;
+}
+
+.product-detail h1 {
+  margin-bottom: 20px;
+}
+
+.product-detail p {
+  margin: 10px 0;
+}
+
+.product-detail .btn {
+  margin-right: 10px;
+}

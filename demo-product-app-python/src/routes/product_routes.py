@@ -15,7 +15,7 @@ def create_product():
 def get_products():
     try:
         products = ProductService.get_all_products()
-        return jsonify(products), 200
+        return jsonify([product.to_dict() for product in products]), 200
     except Exception as e:
         return jsonify({'message': str(e)}), 500
 

@@ -1,0 +1,58 @@
+Contents of the file: /demo-product-react-app/demo-product-react-app/src/components/ProductForm.js
+
+import React, { useState, useEffect } from 'react';
+import { createProduct, updateProduct } from '../services/productService';
+import { useHistory } from 'react-router-dom';
+
+const ProductForm = ({ product }) => {
+    const [name, setName] = useState('');
+    const [description, setDescription] = useState('');
+    const [price, setPrice] = useState('');
+    const [quantity, setQuantity] = useState('');
+    const history = useHistory();
+
+    useEffect(() => {
+        if (product) {
+            setName(product.name);
+            setDescription(product.description);
+            setPrice(product.price);
+            setQuantity(product.quantity);
+        }
+    }, [product]);
+
+    const handleSubmit = async (e) => {
+        e.preventDefault();
+        const productData = { name, description, price: parseFloat(price), quantity: parseInt(quantity) };
+
+        if (product) {
+            await updateProduct(product.id, productData);
+        } else {
+            await createProduct(productData);
+        }
+        history.push('/');
+    };
+
+    return (
+        <form onSubmit={handleSubmit}>
+            <div>
+                <label>Name:</label>
+                <input type="text" value={name} onChange={(e) => setName(e.target.value)} required />
+            </div>
+            <div>
+                <label>Description:</label>
+                <textarea value={description} onChange={(e) => setDescription(e.target.value)} required />
+            </div>
+            <div>
+                <label>Price:</label>
+                <input type="number" value={price} onChange={(e) => setPrice(e.target.value)} required />
+            </div>
+            <div>
+                <label>Quantity:</label>
+                <input type="number" value={quantity} onChange={(e) => setQuantity(e.target.value)} required />
+            </div>
+            <button type="submit">{product ? 'Update' : 'Create'} Product</button>
+        </form>
+    );
+};
+
+export default ProductForm;

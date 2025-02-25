@@ -38,6 +38,8 @@ class TestProductCRUD(unittest.TestCase):
         response = self.create_product()
         logging.info(f"Test create product response: {response.get_json()}")
         self.assertEqual(response.status_code, 201)
+        self.assertIn('id', response.get_json())
+        self.assertEqual(response.get_json()['name'], 'Test Product')
 
     def test_read_product(self):
         response = self.create_product()
@@ -46,6 +48,17 @@ class TestProductCRUD(unittest.TestCase):
         response = self.app.get(f'/products/{product_id}')
         logging.info(f"Test read product response: {response.get_json()}")
         self.assertEqual(response.status_code, 200)
+        self.assertEqual(response.get_json()['id'], product_id)
+
+    def test_get_all_products(self):
+        # Create a product to ensure there is at least one product in the database
+        self.create_product()
+        logging.info("Getting all products")
+        response = self.app.get('/products')
+        logging.info(f"Test get all products response: {response.get_json()}")
+        self.assertEqual(response.status_code, 200)
+        self.assertIsInstance(response.get_json(), list)
+        self.assertGreater(len(response.get_json()), 0)
 
     def test_update_product(self):
         response = self.create_product()
@@ -59,14 +72,19 @@ class TestProductCRUD(unittest.TestCase):
         })
         logging.info(f"Test update product response: {response.get_json()}")
         self.assertEqual(response.status_code, 200)
+        self.assertEqual(response.get_json()['name'], 'Updated Product')
 
     def test_delete_product(self):
         response = self.create_product()
         product_id = response.get_json()['id']
         logging.info("Deleting a product")
         response = self.app.delete(f'/products/{product_id}')
-        logging.info(f"Test delete product response: {response.get_json()}")
+        logging.info(f"Test delete product response: {response.status_code}")
         self.assertEqual(response.status_code, 204)
+
+        # Verify that the product was deleted
+        response = self.app.get(f'/products/{product_id}')
+        self.assertEqual(response.status_code, 404)
 
 if __name__ == '__main__':
     unittest.main()

@@ -1,0 +1,27 @@
+.product-form {
+  max-width: 600px;
+  margin: 0 auto;
+}
+
+.product-form h1 {
+  margin-bottom: 20px;
+}
+
+.product-form .form-group {
+  margin-bottom: 15px;
+}
+
+.product-form .form-group label {
+  display: block;
+  margin-bottom: 5px;
+}
+
+.product-form .form-group input {
+  width: 100%;
+  padding: 8px;
+  box-sizing: border-box;
+}
+
+.product-form .btn {
+  margin-top: 20px;
+}
