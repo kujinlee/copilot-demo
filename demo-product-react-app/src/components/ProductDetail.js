@@ -25,17 +25,20 @@ function ProductDetail() {
   }
 
   return (
-    <div className="product-detail">
-      <h1>{product.name}</h1>
+    <div className="container product-detail">
+      <h1 className="my-4">{product.name}</h1>
       <p>{product.description}</p>
       <p>Price: ${product.price}</p>
       <p>Quantity: {product.quantity}</p>
-      <Link to={`/products/${product.id}/edit`} className="btn btn-primary">
+      <Link to={`/products/${product.id}/edit`} className="btn btn-primary mr-2">
         Edit
       </Link>
-      <button onClick={handleDelete} className="btn btn-danger">
+      <button onClick={handleDelete} className="btn btn-danger mr-2">
         Delete
       </button>
+      <Link to="/" className="btn btn-secondary">
+        Back to Product List
+      </Link>
     </div>
   );
 }

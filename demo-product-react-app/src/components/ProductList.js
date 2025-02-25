@@ -13,12 +13,12 @@ function ProductList() {
   }, []);
 
   return (
-    <div className="product-list">
-      <h1>Product List</h1>
-      <Link to="/products/new" className="btn btn-primary">Add Product</Link>
-      <ul>
+    <div className="container product-list">
+      <h1 className="my-4">Product List</h1>
+      <Link to="/products/new" className="btn btn-primary mb-3">Add Product</Link>
+      <ul className="list-group">
         {products.map((product) => (
-          <li key={product.id}>
+          <li key={product.id} className="list-group-item">
             <Link to={`/products/${product.id}`}>{product.name}</Link>
           </li>
         ))}

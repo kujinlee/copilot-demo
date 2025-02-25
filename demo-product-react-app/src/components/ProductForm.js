@@ -43,8 +43,8 @@ function ProductForm() {
   };
 
   return (
-    <div className="product-form">
-      <h1>{id ? 'Edit Product' : 'Add Product'}</h1>
+    <div className="container product-form">
+      <h1 className="my-4">{id ? 'Edit Product' : 'Add Product'}</h1>
       <form onSubmit={handleSubmit}>
         <div className="form-group">
           <label>Name</label>
@@ -53,6 +53,7 @@ function ProductForm() {
             name="name"
             value={product.name}
             onChange={handleChange}
+            className="form-control"
             required
           />
         </div>
@@ -63,6 +64,7 @@ function ProductForm() {
             name="description"
             value={product.description}
             onChange={handleChange}
+            className="form-control"
           />
         </div>
         <div className="form-group">
@@ -72,6 +74,7 @@ function ProductForm() {
             name="price"
             value={product.price}
             onChange={handleChange}
+            className="form-control"
             required
           />
         </div>
@@ -82,10 +85,11 @@ function ProductForm() {
             name="quantity"
             value={product.quantity}
             onChange={handleChange}
+            className="form-control"
             required
           />
         </div>
-        <button type="submit" className="btn btn-primary">
+        <button type="submit" className="btn btn-primary mt-3">
           {id ? 'Update' : 'Create'}
         </button>
       </form>
