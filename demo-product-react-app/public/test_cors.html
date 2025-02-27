@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CORS Test</title>
+    <script>
+        function testCORS() {
+            console.log("Testing CORS...");
+            
+            // Show loading state
+            document.getElementById('result').textContent = "Loading...";
+            
+            fetch('http://localhost:5001/api/cors-test', {
+                method: 'GET',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                mode: 'cors' // Explicitly set CORS mode
+            })
+            .then(response => {
+                console.log("Response received:", response);
+                return response.json();
+            })
+            .then(data => {
+                console.log("Data received:", data);
+                document.getElementById('result').textContent = JSON.stringify(data, null, 2);
+            })
+            .catch(error => {
+                console.error("Error:", error);
+                document.getElementById('result').textContent = "Error: " + error.message;
+            });
+        }
+    </script>
+</head>
+<body>
+    <h1>CORS Test</h1>
+    <button onclick="testCORS()">Test CORS</button>
+    <div id="result" style="margin-top: 20px; padding: 10px; border: 1px solid #ccc; white-space: pre;"></div>
+</body>
+</html>
