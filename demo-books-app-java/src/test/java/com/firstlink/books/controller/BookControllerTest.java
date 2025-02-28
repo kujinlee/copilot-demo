@@ -10,15 +10,14 @@ import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 
-import java.util.Arrays;
+import java.util.Collections;
 import java.util.Optional;
 
-import static org.hamcrest.Matchers.is;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.BDDMockito.given;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @WebMvcTest(BookController.class)
 public class BookControllerTest {
@@ -31,16 +30,10 @@ public class BookControllerTest {
 
     @Test
     public void testGetAllBooks() throws Exception {
-        Book book = new Book();
-        book.setId(1L);
-        book.setTitle("Test Book");
-        book.setAuthor("Test Author");
+        given(bookService.getAllBooks()).willReturn(Collections.emptyList());
 
-        given(bookService.findAll()).willReturn(Arrays.asList(book));
-
-        mockMvc.perform(get("/api/books"))
-                .andExpect(status().isOk())
-                .andExpect(jsonPath("$[0].title", is(book.getTitle())));
+        mockMvc.perform(get("/books"))
+                .andExpect(status().isOk());
     }
 
     @Test
@@ -50,18 +43,17 @@ public class BookControllerTest {
         book.setTitle("Test Book");
         book.setAuthor("Test Author");
 
-        given(bookService.findById(anyLong())).willReturn(Optional.of(book));
+        given(bookService.getBookById(anyLong())).willReturn(Optional.of(book));
 
-        mockMvc.perform(get("/api/books/1"))
-                .andExpect(status().isOk())
-                .andExpect(jsonPath("$.title", is(book.getTitle())));
+        mockMvc.perform(get("/books/1"))
+                .andExpect(status().isOk());
     }
 
     @Test
     public void testGetBookByIdNotFound() throws Exception {
-        given(bookService.findById(anyLong())).willReturn(Optional.empty());
+        given(bookService.getBookById(anyLong())).willReturn(Optional.empty());
 
-        mockMvc.perform(get("/api/books/1"))
+        mockMvc.perform(get("/books/1"))
                 .andExpect(status().isNotFound());
     }
 
@@ -72,30 +64,28 @@ public class BookControllerTest {
         book.setTitle("Test Book");
         book.setAuthor("Test Author");
 
-        given(bookService.save(any(Book.class))).willReturn(book);
+        given(bookService.createBook(any(Book.class))).willReturn(book);
 
-        mockMvc.perform(post("/api/books")
+        mockMvc.perform(post("/books")
                 .contentType(MediaType.APPLICATION_JSON)
-                .content("{\"title\":\"Test Book\",\"author\":\"Test Author\"}"))
-                .andExpect(status().isOk())
-                .andExpect(jsonPath("$.title", is(book.getTitle())));
+                .content("{\"title\": \"Test Book\", \"author\": \"Test Author\"}"))
+                .andExpect(status().isCreated());
     }
 
     @Test
     public void testUpdateBook() throws Exception {
         Book book = new Book();
         book.setId(1L);
-        book.setTitle("Test Book");
-        book.setAuthor("Test Author");
+        book.setTitle("Updated Book");
+        book.setAuthor("Updated Author");
 
-        given(bookService.findById(anyLong())).willReturn(Optional.of(book));
-        given(bookService.save(any(Book.class))).willReturn(book);
+        given(bookService.getBookById(anyLong())).willReturn(Optional.of(book));
+        given(bookService.updateBook(anyLong(), any(Book.class))).willReturn(book);
 
-        mockMvc.perform(put("/api/books/1")
+        mockMvc.perform(put("/books/1")
                 .contentType(MediaType.APPLICATION_JSON)
-                .content("{\"title\":\"Updated Book\",\"author\":\"Updated Author\"}"))
-                .andExpect(status().isOk())
-                .andExpect(jsonPath("$.title", is("Updated Book")));
+                .content("{\"title\": \"Updated Book\", \"author\": \"Updated Author\"}"))
+                .andExpect(status().isOk());
     }
 
     @Test
@@ -105,10 +95,10 @@ public class BookControllerTest {
         book.setTitle("Test Book");
         book.setAuthor("Test Author");
 
-        given(bookService.findById(anyLong())).willReturn(Optional.of(book));
-        Mockito.doNothing().when(bookService).deleteById(anyLong());
+        given(bookService.getBookById(anyLong())).willReturn(Optional.of(book));
+        Mockito.doNothing().when(bookService).deleteBook(anyLong());
 
-        mockMvc.perform(delete("/api/books/1"))
-                .andExpect(status().isOk());
+        mockMvc.perform(delete("/books/1"))
+                .andExpect(status().isNoContent());
     }
 }

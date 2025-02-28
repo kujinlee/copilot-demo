@@ -1,31 +1,18 @@
 package com.firstlink.books.entity;
 
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
+import jakarta.persistence.Entity;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
 
 @Entity
 public class Book {
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     private String title;
     private String author;
-    private String isbn;
-    private double price;
-
-    // Default constructor
-    public Book() {
-    }
-
-    // Parameterized constructor
-    public Book(String title, String author, String isbn, double price) {
-        this.title = title;
-        this.author = author;
-        this.isbn = isbn;
-        this.price = price;
-    }
 
     // Getters and setters
     public Long getId() {
@@ -50,21 +37,5 @@ public class Book {
 
     public void setAuthor(String author) {
         this.author = author;
-    }
-
-    public String getIsbn() {
-        return isbn;
-    }
-
-    public void setIsbn(String isbn) {
-        this.isbn = isbn;
-    }
-
-    public double getPrice() {
-        return price;
-    }
-
-    public void setPrice(double price) {
-        this.price = price;
     }
 }

@@ -10,7 +10,7 @@ import java.util.List;
 import java.util.Optional;
 
 @RestController
-@RequestMapping("/api/books")
+@RequestMapping("/books")
 public class BookController {
 
     @Autowired
@@ -18,28 +18,28 @@ public class BookController {
 
     @GetMapping
     public List<Book> getAllBooks() {
-        return bookService.findAll();
+        return bookService.getAllBooks();
     }
 
     @GetMapping("/{id}")
     public ResponseEntity<Book> getBookById(@PathVariable Long id) {
-        Optional<Book> book = bookService.findById(id);
-        return book.map(ResponseEntity::ok).orElseGet(() -> ResponseEntity.notFound().build());
+        Optional<Book> book = bookService.getBookById(id);
+        return book.map(ResponseEntity::ok)
+                   .orElseGet(() -> ResponseEntity.notFound().build());
     }
 
     @PostMapping
-    public Book createBook(@RequestBody Book book) {
-        return bookService.save(book);
+    public ResponseEntity<Book> createBook(@RequestBody Book book) {
+        Book createdBook = bookService.createBook(book);
+        return ResponseEntity.status(201).body(createdBook);
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<Book> updateBook(@PathVariable Long id, @RequestBody Book bookDetails) {
-        Optional<Book> book = bookService.findById(id);
-        if (book.isPresent()) {
-            Book updatedBook = book.get();
-            updatedBook.setTitle(bookDetails.getTitle());
-            updatedBook.setAuthor(bookDetails.getAuthor());
-            return ResponseEntity.ok(bookService.save(updatedBook));
+    public ResponseEntity<Book> updateBook(@PathVariable Long id, @RequestBody Book book) {
+        Optional<Book> existingBook = bookService.getBookById(id);
+        if (existingBook.isPresent()) {
+            Book updatedBook = bookService.updateBook(id, book);
+            return ResponseEntity.ok(updatedBook);
         } else {
             return ResponseEntity.notFound().build();
         }
@@ -47,9 +47,10 @@ public class BookController {
 
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> deleteBook(@PathVariable Long id) {
-        if (bookService.findById(id).isPresent()) {
-            bookService.deleteById(id);
-            return ResponseEntity.ok().build();
+        Optional<Book> existingBook = bookService.getBookById(id);
+        if (existingBook.isPresent()) {
+            bookService.deleteBook(id);
+            return ResponseEntity.noContent().build();
         } else {
             return ResponseEntity.notFound().build();
         }
